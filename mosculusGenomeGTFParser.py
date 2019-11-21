@@ -17,6 +17,7 @@ class GeneAnnotationComparison:
         file_handler.readline()
         file_handler.readline()
         self.content = file_handler.read()
+
     def getCategories(self):
         listOfDuplicateCategories=[]
         categoryFinder=re.findall('gene_biotype "\S+', self.content)
@@ -28,16 +29,16 @@ class GeneAnnotationComparison:
                 listOfCategories.append(i)
         return listOfCategories
 
-    def transcriptFinder(self):
-        listOfDuplicateCategories=[]
-        categoryFinder = re.findall('gene_biotype "\S+', self.content)
-        for parts in categoryFinder:
-            listOfDuplicateCategories.append(parts[14:len(parts) - 2])
-        transcriptFinder = re.findall('ENSMUST\S+', self.content)
-        parsedtranscriptFinder=[]
-        for i in transcriptFinder:
-            parsedtranscriptFinder.append(i[:-2])
-        print(self.merge(listOfDuplicateCategories, parsedtranscriptFinder))
+    # def transcriptFinder(self):
+    #     listOfDuplicateCategories=[]
+    #     categoryFinder = re.findall('gene_biotype "\S+', self.content)
+    #     for parts in categoryFinder:
+    #         listOfDuplicateCategories.append(parts[14:len(parts) - 2])
+    #     transcriptFinder = re.findall('ENSMUST\S+', self.content)
+    #     parsedtranscriptFinder=[]
+    #     for i in transcriptFinder:
+    #         parsedtranscriptFinder.append(i[:-2])
+    #     print(self.merge(listOfDuplicateCategories, parsedtranscriptFinder))
 
     def merge(self, list1, list2):
         mergedList = []
@@ -73,15 +74,16 @@ class GeneAnnotationComparison:
                 if c in l:
                     print(c)
     def getGeneNames(self):
-        listOfDuplicateCategories = []
-        geneNameFinder = re.findall('gene_name "\S+', self.content)
+        listOfDuplicateCategories = set()
+        geneNameFinder = re.findall('gene_name "\S+?;', self.content)
         for parts in geneNameFinder:
-            listOfDuplicateCategories.append(parts[11:len(parts) - 2])
-        g=[]
-        for i in listOfDuplicateCategories:
-            if i not in g:
-                g.append(i)
-        print(g)
+            listOfDuplicateCategories.add((parts[11:len(parts) - 2]))
+        # g=[]
+        # for i in listOfDuplicateCategories:
+        #     if i not in g:
+        #         g.append(i)\
+        return listOfDuplicateCategories
+        print(listOfDuplicateCategories)
 def main():
     """
     This is the main method
@@ -89,7 +91,7 @@ def main():
     fileOfGenomeVersion82="Mus_musculus.GRCm38.82.chr.gtf"
     mouseGenomeVersion82 = GeneAnnotationComparison(fileOfGenomeVersion82)
     mouseGenomeVersion82.extract()
-    mouseGenomeVersion82.transcriptFinder()
+    # mouseGenomeVersion82.transcriptFinder()
     m82 = mouseGenomeVersion82.getCategories()
     print("There are "+str(len(m82))+" categories in Mus_musculus.GRCm38.82.chr.gtf")
     for m in m82:
@@ -103,5 +105,14 @@ def main():
     print("There are " + str(len(m98)) + " categories in Mus_musculus.GRCm38.98.chr.gtf")
     for m in m98:
         print(m)
+    list(mouseGenomeVersion98.getGeneNames())
+    list(mouseGenomeVersion82.getGeneNames())
+    categ98 = str(mouseGenomeVersion98.getCategories())
+    genes98 = str(mouseGenomeVersion98.getGeneNames())
+    categ82 = str(mouseGenomeVersion82.getCategories())
+    genes82 = str(mouseGenomeVersion82.getGeneNames())
+
+    with open('output', 'w') as f:
+        f.write(categ98 + '\n' + "\t" + categ82 + '\n' + "\t" + genes98 + '\n' + "\t" +genes82)
 if __name__ == "__main__":
     main()
