@@ -60,19 +60,13 @@ class GeneAnnotationComparison:
 
     def getAssociations(self):
         line = self.content.split("\t")
-        listOfDuplicateCategories = []
-        categoryFinder = re.findall('gene_biotype "\S+', self.content)
-        for parts in categoryFinder:
-            listOfDuplicateCategories.append(parts[14:len(parts) - 2])
-        listOfCategories = []
-        for i in listOfDuplicateCategories:
-            if i not in listOfCategories:
-                listOfCategories.append(i)
-
-        for c in listOfCategories:
-            for l in line:
-                if c in l:
-                    print(c)
+        result = []
+        for i in line[:-1]:
+            var = re.findall('gene_biotype "\S+', i)[0][14:]
+            result.append(var[0:-2]+" "+i[0:2])
+        r='\n'.join(map(str, result))
+        with open('associationsBetweenCategoryAndNumber', 'w') as f:
+            f.write(r)
     def getGeneNames(self):
         listOfDuplicateCategories = set()
         geneNameFinder = re.findall('gene_name "\S+?;', self.content)
