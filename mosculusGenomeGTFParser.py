@@ -39,6 +39,18 @@ class GeneAnnotationComparison:
     #     for i in transcriptFinder:
     #         parsedtranscriptFinder.append(i[:-2])
     #     print(self.merge(listOfDuplicateCategories, parsedtranscriptFinder))
+    def getCount(self):
+        di = dict()
+        listOfDuplicateCategories = []
+        categoryFinder = re.findall('gene_biotype "\S+', self.content)
+        for parts in categoryFinder:
+            listOfDuplicateCategories.append(parts[14:len(parts) - 2])
+        for p in listOfDuplicateCategories:
+            if p in di:
+                di[p]=di[p]+1
+            else:
+                di[p]=1
+        return di
 
     def merge(self, list1, list2):
         mergedList = []
@@ -78,6 +90,11 @@ class GeneAnnotationComparison:
         #         g.append(i)\
         return listOfDuplicateCategories
         print(listOfDuplicateCategories)
+    def numberOfTranscripts(self):
+        countT=0
+        transcript = re.findall('	transcript	', self.content)
+        print('Number of transcripts annotated', len(transcript))
+
 def main():
     """
     This is the main method
@@ -91,6 +108,15 @@ def main():
     for m in m82:
          print(m)
     mouseGenomeVersion82.getGeneNames()
+    categoryCount = str(mouseGenomeVersion82.getCount())
+    categoryCount = categoryCount.replace('{', '')
+    categoryCount=categoryCount.replace(':','\t')
+    categoryCount=categoryCount.replace(',', '\n')
+    categoryCount=categoryCount.replace('\'', '')
+    categoryCount = categoryCount.replace('}', '')
+    with open('countForEachCategory', 'w') as f:
+        f.write(categoryCount)
+    mouseGenomeVersion82.numberOfTranscripts()
     print("\n\n\n")
     fileOfGenomeVersion98 = "Mus_musculus.GRCm38.98.chr.gtf"
     mouseGenomeVersion98 = GeneAnnotationComparison(fileOfGenomeVersion98)
@@ -105,7 +131,7 @@ def main():
     genes98 = str(mouseGenomeVersion98.getGeneNames())
     categ82 = str(mouseGenomeVersion82.getCategories())
     genes82 = str(mouseGenomeVersion82.getGeneNames())
-
+    mouseGenomeVersion98.numberOfTranscripts()
     with open('output', 'w') as f:
         f.write(categ98 + '\n' + "\t" + categ82 + '\n' + "\t" + genes98 + '\n' + "\t" +genes82)
 if __name__ == "__main__":
