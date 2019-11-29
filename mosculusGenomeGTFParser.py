@@ -29,16 +29,6 @@ class GeneAnnotationComparison:
                 listOfCategories.append(i)
         return listOfCategories
 
-    # def transcriptFinder(self):
-    #     listOfDuplicateCategories=[]
-    #     categoryFinder = re.findall('gene_biotype "\S+', self.content)
-    #     for parts in categoryFinder:
-    #         listOfDuplicateCategories.append(parts[14:len(parts) - 2])
-    #     transcriptFinder = re.findall('ENSMUST\S+', self.content)
-    #     parsedtranscriptFinder=[]
-    #     for i in transcriptFinder:
-    #         parsedtranscriptFinder.append(i[:-2])
-    #     print(self.merge(listOfDuplicateCategories, parsedtranscriptFinder))
     def getCount(self):
         di = dict()
         listOfDuplicateCategories = []
@@ -94,15 +84,46 @@ class GeneAnnotationComparison:
         countT=0
         transcript = re.findall('	transcript	', self.content)
         print('Number of transcripts annotated', len(transcript))
-
+    def createTabDelimitedInput(self):
+        line = self.content.split('\n')
+        tabDelimitedInput = []
+        for ex in line:
+            if ex.__contains__('	exon	'):
+                var=ex.split('\t')
+                chromosome = var[0]
+                start = var[3]
+                end = var[4]
+                strand = var[6]
+                typeFinder = re.findall('gene_biotype "\S+', ex)[0][14:]
+                typeFinder2 = typeFinder[0:-2]
+                geneNameFinder = re.findall('gene_name "\S+', ex)
+                geneNameFinder = str(geneNameFinder).replace('[', '').replace(']', '').replace('\'','').replace('gene_name ', '').replace('\"', '').replace(';','')
+                transcriptIDFinder = re.findall('ENSMUST[0-9]{11}', ex)
+                transcriptIDFinder = str(transcriptIDFinder).replace('[', '').replace(']', '').replace('\'', '')
+                geneIDFinder = re.findall('ENSMUSG[0-9]{11}', ex)
+                geneIDFinder = str(geneIDFinder).replace('[', '').replace(']', '').replace('\'', '')
+                exonIDFinder = re.findall('exon_id "\S+', ex)
+                exonIDFinder = str(exonIDFinder).replace('[', '').replace(']', '').replace('\'','').replace('exon_id ', '').replace('\"', '').replace(';','')
+                tabDelimitedInput.append(transcriptIDFinder + '\t'+ geneIDFinder + '\t'+geneNameFinder +'\t' +typeFinder2 +'\t'+chromosome +'\t' +strand+'\t' +exonIDFinder+'\t'+start+'\t'+end)
+        tabFileInput='\n'.join(tabDelimitedInput)
+        with open('tookToLongToGetHere.txt', 'w') as f:
+            f.write(tabFileInput)
+        return tabDelimitedInput
+    def geneAssociations(self):
+        line = self.content.split('\n')
+        listOfGenes=[]
+        for l in line:
+            if l.__contains__('	gene	'):
+                print(l)
 def main():
     """
     This is the main method
     """
+    #=============================================File of Genome Version 82
     fileOfGenomeVersion82="Mus_musculus.GRCm38.82.chr.gtf"
     mouseGenomeVersion82 = GeneAnnotationComparison(fileOfGenomeVersion82)
     mouseGenomeVersion82.extract()
-    # mouseGenomeVersion82.transcriptFinder()
+    tabDelimitedList = mouseGenomeVersion82.createTabDelimitedInput()
     m82 = mouseGenomeVersion82.getCategories()
     print("There are "+str(len(m82))+" categories in Mus_musculus.GRCm38.82.chr.gtf")
     for m in m82:
@@ -118,6 +139,7 @@ def main():
         f.write(categoryCount)
     mouseGenomeVersion82.numberOfTranscripts()
     print("\n\n\n")
+    #=============================================File of Genome Version 98
     fileOfGenomeVersion98 = "Mus_musculus.GRCm38.98.chr.gtf"
     mouseGenomeVersion98 = GeneAnnotationComparison(fileOfGenomeVersion98)
     mouseGenomeVersion98.extract()
@@ -125,14 +147,6 @@ def main():
     print("There are " + str(len(m98)) + " categories in Mus_musculus.GRCm38.98.chr.gtf")
     for m in m98:
         print(m)
-    list(mouseGenomeVersion98.getGeneNames())
-    list(mouseGenomeVersion82.getGeneNames())
-    categ98 = str(mouseGenomeVersion98.getCategories())
-    genes98 = str(mouseGenomeVersion98.getGeneNames())
-    categ82 = str(mouseGenomeVersion82.getCategories())
-    genes82 = str(mouseGenomeVersion82.getGeneNames())
     mouseGenomeVersion98.numberOfTranscripts()
-    with open('output', 'w') as f:
-        f.write(categ98 + '\n' + "\t" + categ82 + '\n' + "\t" + genes98 + '\n' + "\t" +genes82)
 if __name__ == "__main__":
     main()
