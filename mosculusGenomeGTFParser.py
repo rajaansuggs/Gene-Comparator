@@ -28,17 +28,6 @@ class GeneAnnotationComparison:
             if i not in listOfCategories:
                 listOfCategories.append(i)
         return listOfCategories
-
-    # def transcriptFinder(self):
-    #     listOfDuplicateCategories=[]
-    #     categoryFinder = re.findall('gene_biotype "\S+', self.content)
-    #     for parts in categoryFinder:
-    #         listOfDuplicateCategories.append(parts[14:len(parts) - 2])
-    #     transcriptFinder = re.findall('ENSMUST\S+', self.content)
-    #     parsedtranscriptFinder=[]
-    #     for i in transcriptFinder:
-    #         parsedtranscriptFinder.append(i[:-2])
-    #     print(self.merge(listOfDuplicateCategories, parsedtranscriptFinder))
     def getCount(self):
         di = dict()
         listOfDuplicateCategories = []
