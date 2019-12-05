@@ -4,12 +4,12 @@
 import pymysql, cgi, cgitbcgitb.enable(display=0, logdir="~/public_html" )
 
 form = cgi.FieldStorage()
-geneName = form.getvalue('GeneName')
+geneName = form.getvalue('geneName')
 db = pymysql.connect(host="localhost", user="jacks118", passwd="bio466", db="jacks118")
 
 # Create a Cursor object to execute queries.
 cur = db.cursor()
-cur.execute("SELECT * FROM Gene98 WHERE GeneName=\""+geneName+"\"")
+cur.execute("SELECT * FROM Gene98 WHERE geneName=\""+geneName+"\"")
 
 
  #  Select data from table using SQL query.
