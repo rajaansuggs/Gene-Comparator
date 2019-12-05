@@ -1,7 +1,7 @@
 
 #!/File Name: cgi.db.1.py
 #!/usr/bin/python3.7
-import pymiysql, cgi, cgitb
+import pymysql, cgi, cgitb
 cgitb.enable()
 db = pymysql.connect(host="localhost", user="suggsrc", passwd="bio466", db="suggsrc")
 # Create a Cursor object to execute queries.
