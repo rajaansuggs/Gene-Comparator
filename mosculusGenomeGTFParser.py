@@ -27,7 +27,7 @@ class GeneAnnotationComparison:
     def getCategories(self):
         """
         This method gets each category
-        :return:listOfCategories
+        :return:
         """
         listOfDuplicateCategories = []
         categoryFinder = re.findall('gene_biotype "\S+', self.content)
@@ -147,7 +147,6 @@ class GeneAnnotationComparison:
         tabFileInput = '\n'.join(tabDelimitedInput)
         return tabFileInput
 
-
 def main():
     """
     This is the main method
@@ -171,7 +170,7 @@ def main():
         f.write(categoryCount)
     mouseGenomeVersion82.numberOfTranscripts()
     tabDelimitedList = mouseGenomeVersion82.createTranscriptTabDelimitedInput()
-    tabGeneDelimitedList = mouseGenomeVersion82.createGeneTabDelimitedInput(1)
+    tabGeneDelimitedList = mouseGenomeVersion82.createGeneTabDelimitedInput(82)
     print("\n\n\n")
     # =============================================File of Genome Version 98
     fileOfGenomeVersion98 = "Mus_musculus.GRCm38.98.chr.gtf"
@@ -183,12 +182,13 @@ def main():
         print(m)
     mouseGenomeVersion98.numberOfTranscripts()
     tabDelimitedList2 = mouseGenomeVersion98.createTranscriptTabDelimitedInput()
-    tabGeneDelimitedList2 = mouseGenomeVersion98.createGeneTabDelimitedInput(2)
-    with open('tookTooLongToGetHere.txt', 'w') as f:
-        f.write(tabDelimitedList + '\n' + tabDelimitedList2)
-    with open('GeneFile.txt', 'w') as f:
-        f.write(tabGeneDelimitedList + '\n' + tabGeneDelimitedList2)
-
+    tabGeneDelimitedList2 = mouseGenomeVersion98.createGeneTabDelimitedInput(98)
+    with open('Transcript.txt', 'w') as f:
+        f.write(tabDelimitedList +'\t'+tabDelimitedList2)
+    with open('Gene82.txt', 'w') as f:
+        f.write(tabGeneDelimitedList)
+    with open('Gene98.txt', 'w') as f:
+        f.write(tabGeneDelimitedList2)
 
 if __name__ == "__main__":
     main()
