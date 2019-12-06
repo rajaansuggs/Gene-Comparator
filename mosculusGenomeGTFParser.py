@@ -34,6 +34,14 @@ class GeneAnnotationComparison:
         for parts in categoryFinder:
             listOfDuplicateCategories.append(parts[14:len(parts) - 2])
         listOfCategories = []
+        li = [[x, listOfDuplicateCategories.count(x)] for x in set(listOfDuplicateCategories)]
+        string = str(li).replace(']','</td></tr>\n').replace('\'','').replace(',','').replace('[[','<tr><td>').replace('[','<tr><td>')
+        li1=string.split('\n')
+        newLI=[]
+        for i in li1:
+            newLI.append(i.lstrip().replace(' ', '</td><td>'))
+        l=str(newLI).replace(',','\n').replace('[','').replace(']','').replace('\'','')
+        print(l)
         for i in listOfDuplicateCategories:
             if i not in listOfCategories:
                 listOfCategories.append(i)
@@ -180,6 +188,7 @@ def main():
     print("There are " + str(len(m98)) + " categories in Mus_musculus.GRCm38.98.chr.gtf")
     for m in m98:
         print(m)
+
     mouseGenomeVersion98.numberOfTranscripts()
     tabDelimitedList2 = mouseGenomeVersion98.createTranscriptTabDelimitedInput()
     tabGeneDelimitedList2 = mouseGenomeVersion98.createGeneTabDelimitedInput(98)
